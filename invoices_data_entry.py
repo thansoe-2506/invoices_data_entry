@@ -236,7 +236,7 @@ def add_new_row():
         time.sleep(DELAY_TIME/2)
 
     # click add new row button
-    pyautogui.press('enter')
+    pyautogui.hotkey('shift','enter')
     time.sleep(LOCAL_DELAY_TIME)
 
     # got to add item code
