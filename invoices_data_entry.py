@@ -552,7 +552,7 @@ def main():
                 time.sleep(0.9)
             pyautogui.hotkey('alt','tab')
 
-    print('all done!')
+    print('ALL DONE!!!!')
 
 if __name__ == '__main__':
     main()
