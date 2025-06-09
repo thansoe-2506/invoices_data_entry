@@ -1,4 +1,4 @@
-import sys
+import sys, re
 import pyautogui
 import time
 import pyperclip
@@ -12,6 +12,34 @@ DELAY_TIME = 0.6
 LOCAL_DELAY_TIME = 0.3
 
 task_numbers = int(sys.argv[1])
+
+def extract_sku_with_context(text_lines):
+    # Split text into lines
+    lines = text_lines.split('\n') if isinstance(text_lines, str) else text_lines
+    results = []
+    
+    for i, line in enumerate(lines):
+        # Find SKU pattern (with optional "SKU:" prefix)
+        sku_match = re.search(r'(?:SKU:\s*)?([A-Z]{3}-[A-Z]{3}-[A-Z]{3}-\d{5})', line)
+        if sku_match:
+            sku = sku_match.group(1)
+            context_lines = []
+            
+            # Get next lines after current line
+            remaining_lines = lines[i+1:]
+            
+            # Collect next 3 non-empty lines
+            for next_line in remaining_lines:
+                stripped = next_line.strip()
+                if stripped:
+                    context_lines.append(stripped)
+                    if len(context_lines) == 3:
+                        break
+            
+            # Add to results (SKU + context lines)
+            results.append([sku] + context_lines)
+    
+    return results
 
 def click_in_blank(a=1884,b=410):
     pyautogui.moveTo(a,b)
@@ -69,7 +97,7 @@ def copy_customer():
 
     for _ in range(2):
         pyautogui.press('left')
-        time.sleep(LOCAL_DELAY_TIME/2)
+        time.sleep(LOCAL_DELAY_TIME)
 
 def add_reference():
     pyautogui.moveTo(1531,526)
@@ -88,7 +116,7 @@ def copy_id():
     print(copied_id)
 
     pyautogui.press('right')
-    time.sleep(LOCAL_DELAY_TIME/2)
+    time.sleep(LOCAL_DELAY_TIME)
 
 def copy_date():
     pyautogui.hotkey('ctrl','c')
@@ -96,7 +124,7 @@ def copy_date():
 
     for _ in range(2):
         pyautogui.press('right')
-        time.sleep(LOCAL_DELAY_TIME/2)
+        time.sleep(LOCAL_DELAY_TIME)
 
 def invoice_date():
     copied_date = pyperclip.paste()
@@ -138,7 +166,7 @@ def copy_item_id():
 
     for _ in range(2):
         pyautogui.press('right')
-        time.sleep(LOCAL_DELAY_TIME/2)
+        time.sleep(LOCAL_DELAY_TIME)
 
 
 def copy_quantity():
@@ -151,6 +179,7 @@ def copy_quantity():
 def copy_value():
     for _ in range(2):
         pyautogui.press('right')
+        time.sleep(LOCAL_DELAY_TIME)
     pyautogui.hotkey('ctrl','c')
 
     change_tab('left')
@@ -170,7 +199,7 @@ def copy_value():
 
     for _ in range(2):
         pyautogui.press('right')
-        time.sleep(LOCAL_DELAY_TIME/2)
+        time.sleep(LOCAL_DELAY_TIME)
 
     pyautogui.press('down')
     time.sleep(LOCAL_DELAY_TIME)
@@ -186,8 +215,6 @@ def quantity():
 
     # click_in_blank(1139,634) #first item, product detail
 
-def unit_value():
-    pass
 
 def click_cancel():
     pyautogui.moveTo(764,969)
@@ -197,7 +224,7 @@ def click_cancel():
 def add_new_row():
     for _ in range(6):
         pyautogui.press('left')
-        time.sleep(LOCAL_DELAY_TIME/2)
+        time.sleep(LOCAL_DELAY_TIME)
 
     copy_item_id()
 
@@ -263,10 +290,10 @@ def add_new_row():
 
     for _ in range(2):
         pyautogui.press('right')
-        time.sleep(LOCAL_DELAY_TIME/2)
+        time.sleep(LOCAL_DELAY_TIME)
 
     pyautogui.press('down')
-    time.sleep(LOCAL_DELAY_TIME/2)
+    time.sleep(LOCAL_DELAY_TIME)
 
     change_tab('left')
 
@@ -365,8 +392,64 @@ def main():
         # GOOGLE SHEET, MOVE CELL TO CUSTOMER NAME
         for _ in range(7):
             pyautogui.press('left')
-            time.sleep(LOCAL_DELAY_TIME/2)
+            time.sleep(LOCAL_DELAY_TIME)
         change_tab('left')
+
+        # extract sku data
+        pyautogui.scroll(4000)
+
+        pyautogui.moveTo(378, 907)
+        pyautogui.mouseDown(button='left')
+        pyautogui.moveTo(1887, 907, duration=1)
+        pyautogui.scroll(-3500)
+        pyautogui.mouseUp(button='left')
+
+        pyautogui.hotkey('ctrl', 'c')
+        pyautogui.click(button='left')
+        time.sleep(0.5)  # Add small delay for clipboard to update
+        copied_text = pyperclip.paste()
+
+        # print("Copied text:")
+        # print(copied_text)
+
+        # Process the text directly (no need to split/strip here)
+        sku_data = extract_sku_with_context(copied_text)
+        print(len(sku_data))
+        
+        change_tab('right')
+        for _ in range(15):
+            pyautogui.press('right')
+            time.sleep(LOCAL_DELAY_TIME)
+        for _ in range(len(sku_data)):
+            pyautogui.press('up')
+            time.sleep(0.2)
+        change_tab('left')
+        
+        print("\nExtracted SKUs with context:")
+        change_tab('right')
+        for entry in sku_data:
+            print(entry[0],entry[1], entry[2], entry[3])
+            temp_text = entry[0],entry[1], entry[2], entry[3]
+            pyperclip.copy(temp_text)
+            pyautogui.hotkey('ctrl','v')
+            pyautogui.press('down')
+            time.sleep(0.2)
+        change_tab('left')
+
+        change_tab('right')
+        for _ in range(15):
+            pyautogui.press('left')
+            time.sleep(LOCAL_DELAY_TIME)
+        change_tab('left')
+        
+        # end extract sku data
+
+        pyautogui.hotkey('alt','tab')
+        time.sleep(DELAY_TIME/2)
+        for k in range(3):
+            print('DELAY TIME BETWEEN TASKS!', k+1 , 'SECONDS')
+            time.sleep(0.9)
+        pyautogui.hotkey('alt','tab')
 
         save_and_confirm()
 
@@ -414,8 +497,56 @@ def main():
             pyautogui.hotkey('alt','tab')
 
         elif header == 'Invoice':
-            print(j+1, " invoice added")
+            # extract sku data
+            pyautogui.scroll(2000)
+
+            pyautogui.moveTo(378, 907)
+            pyautogui.mouseDown(button='left')
+            pyautogui.moveTo(1887, 907, duration=1)
+            pyautogui.scroll(-1500)
+            pyautogui.mouseUp(button='left')
+
+            pyautogui.hotkey('ctrl', 'c')
+            pyautogui.click(button='left')
+            time.sleep(0.5)  # Add small delay for clipboard to update
+            copied_text = pyperclip.paste()
+
+            # print("Copied text:")
+            # print(copied_text)
+
+            # Process the text directly (no need to split/strip here)
+            sku_data = extract_sku_with_context(copied_text)
+            print(len(sku_data))
+
+            change_tab('right')
+            for _ in range(15):
+                pyautogui.press('right')
+                time.sleep(LOCAL_DELAY_TIME)
+            for _ in range(len(sku_data)):
+                pyautogui.press('up')
+                time.sleep(LOCAL_DELAY_TIME)
+            change_tab('left')
+            
+            print("\nExtracted SKUs with context:")
+            change_tab('right')
+            for entry in sku_data:
+                print(entry[0],entry[1], entry[2], entry[3])
+                temp_text = entry[0],entry[1], entry[2], entry[3]
+                pyperclip.copy(temp_text)
+                pyautogui.hotkey('ctrl','v')
+                pyautogui.press('down')
+                time.sleep(0.2)
+            change_tab('left')
+
+            change_tab('right')
+            for _ in range(15):
+                pyautogui.press('left')
+                time.sleep(LOCAL_DELAY_TIME)
+            change_tab('left')
+            # end extract sku data
+
             pyautogui.hotkey('alt','tab')
+            print(j+1, " invoice added")
             for k in range(3):
                 print('DELAY TIME BETWEEN TASKS!', k+1 , 'SECONDS')
                 time.sleep(0.9)
