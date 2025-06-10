@@ -3,9 +3,11 @@ import time, sys, pyperclip, re
 
 DELAY_TIME = 0.6
 task_numbers = int(sys.argv[1])
-payment_date = '15 May 2025'
+payayment_received_date = sys.argv[2]
+payment_date = str(payayment_received_date).replace('-', ' ')
 deposit_to = 'Cashier'
 text = ''
+ref_no = ''
 
 def find_status(text):
     # Use a regular expression to find "Draft" or "Paid".  The \b ensures
@@ -49,6 +51,7 @@ def main():
         change_tab('right')
         time.sleep(DELAY_TIME/1.5)
         pyautogui.hotkey('ctrl','c')
+        ref_no = pyperclip.paste()
         pyautogui.press('right')
         change_tab('left')
         time.sleep(DELAY_TIME/1.5)
@@ -99,7 +102,7 @@ def main():
             pyautogui.click(button='left')
             time.sleep(DELAY_TIME/1.5)
 
-            # 6. click the date box and write the desire date = 25 Apr 2025
+            # 6. click the date box and write the desire date (sys.agrv[2])
             pyautogui.moveTo(1029,405)
             pyautogui.tripleClick()
             time.sleep(DELAY_TIME/1.5)
@@ -119,15 +122,16 @@ def main():
             pyautogui.moveTo(1091,522)
             pyautogui.tripleClick()
             time.sleep(DELAY_TIME/1.5)
-            change_tab('right')
-            pyautogui.press('left')
-            time.sleep(DELAY_TIME)
-            pyautogui.hotkey('ctrl','c')
-            pyautogui.press('right')
-            time.sleep(DELAY_TIME)
-            change_tab('left')
 
-            pyautogui.hotkey('ctrl','v')
+            # change_tab('right')
+            # pyautogui.press('left')
+            # time.sleep(DELAY_TIME)
+            # pyautogui.hotkey('ctrl','c')
+            # pyautogui.press('right')
+            # time.sleep(DELAY_TIME)
+            # change_tab('left')
+
+            pyautogui.write(ref_no)
             time.sleep(DELAY_TIME/1.5)
 
             # 7. click save button
