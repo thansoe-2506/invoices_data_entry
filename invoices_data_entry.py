@@ -231,16 +231,16 @@ def add_new_row():
     change_tab('left')
 
     # move to add new row button
-    for _ in range(4):
+    for _ in range(2):
         pyautogui.press('tab')
-        time.sleep(DELAY_TIME/2)
+        time.sleep(DELAY_TIME)
 
     # click add new row button
     pyautogui.hotkey('shift','enter')
     time.sleep(LOCAL_DELAY_TIME)
 
     # got to add item code
-    for _ in range(7):
+    for _ in range(5):
         pyautogui.hotkey('shift','tab')
         time.sleep(LOCAL_DELAY_TIME)
 
