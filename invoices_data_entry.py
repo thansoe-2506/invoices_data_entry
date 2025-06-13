@@ -7,7 +7,7 @@ import pygame
 pygame.mixer.init()
 pygame.mixer.music.load("source/mixkit-confirmation-tone-2867.wav")  # Can also use .wav
 
-API_DELAY_TIME = 3 # based on the internet connection
+API_DELAY_TIME = 4 # based on the internet connection
 DELAY_TIME = 0.6
 LOCAL_DELAY_TIME = 0.3
 
@@ -173,8 +173,6 @@ def copy_quantity():
     pyautogui.hotkey('ctrl','c')
     time.sleep(LOCAL_DELAY_TIME)
 
-    # pyautogui.press('right')
-    # time.sleep(LOCAL_DELAY_TIME/2)
 
 def copy_value():
     for _ in range(2):
@@ -417,16 +415,17 @@ def main():
         print(len(sku_data))
         
         change_tab('right')
-        for _ in range(15):
+        pyautogui.hotkey('ctrl','right')
+        for _ in range(4):
             pyautogui.press('right')
             time.sleep(LOCAL_DELAY_TIME)
         for _ in range(len(sku_data)):
             pyautogui.press('up')
             time.sleep(0.2)
-        change_tab('left')
+        # change_tab('left')
         
         print("\nExtracted SKUs with context:")
-        change_tab('right')
+        # change_tab('right')
         for entry in sku_data:
             print(entry[0],entry[1], entry[2], entry[3])
             temp_text = entry[0],entry[1], entry[2], entry[3]
@@ -434,11 +433,12 @@ def main():
             pyautogui.hotkey('ctrl','v')
             pyautogui.press('down')
             time.sleep(0.2)
-        change_tab('left')
+        # change_tab('left')
 
-        change_tab('right')
-        for _ in range(15):
-            pyautogui.press('left')
+        # change_tab('right')
+        for _ in range(2): pyautogui.hotkey('ctrl','left')
+        for _ in range(4):
+            pyautogui.press('right')
             time.sleep(LOCAL_DELAY_TIME)
         change_tab('left')
         
@@ -474,19 +474,24 @@ def main():
             change_tab('right')
             pyautogui.press('up')
             time.sleep(LOCAL_DELAY_TIME)
-            for _ in range(12):
-                pyautogui.press('right')
-                time.sleep(LOCAL_DELAY_TIME)
+            pyautogui.press('right')
+            time.sleep(LOCAL_DELAY_TIME)
+            pyautogui.hotkey('ctrl','right')
+            time.sleep(LOCAL_DELAY_TIME)
+            pyautogui.press('right')
+            time.sleep(LOCAL_DELAY_TIME)
             pyautogui.write('Error Invoice!')
 
             # play a notification sound when the quantity not match
             pygame.mixer.music.play()
             
-            for _ in range(12):
-                pyautogui.press('left')
-                time.sleep(LOCAL_DELAY_TIME)
+            pyautogui.hotkey('ctrl','left')
+            time.sleep(LOCAL_DELAY_TIME)
             pyautogui.press('down')
             time.sleep(LOCAL_DELAY_TIME)
+            for _ in range(4): 
+                pyautogui.press('right')
+                time.sleep(LOCAL_DELAY_TIME)
             change_tab('left')
 
             pyautogui.hotkey('alt','tab')
@@ -519,16 +524,17 @@ def main():
             print(len(sku_data))
 
             change_tab('right')
-            for _ in range(15):
+            pyautogui.hotkey('ctrl','right')
+            for _ in range(4):
                 pyautogui.press('right')
                 time.sleep(LOCAL_DELAY_TIME)
             for _ in range(len(sku_data)):
                 pyautogui.press('up')
                 time.sleep(LOCAL_DELAY_TIME)
-            change_tab('left')
+            # change_tab('left')
             
             print("\nExtracted SKUs with context:")
-            change_tab('right')
+            # change_tab('right')
             for entry in sku_data:
                 print(entry[0],entry[1], entry[2], entry[3])
                 temp_text = entry[0],entry[1], entry[2], entry[3]
@@ -536,11 +542,12 @@ def main():
                 pyautogui.hotkey('ctrl','v')
                 pyautogui.press('down')
                 time.sleep(0.2)
-            change_tab('left')
+            # change_tab('left')
 
-            change_tab('right')
-            for _ in range(15):
-                pyautogui.press('left')
+            # change_tab('right')
+            for _ in range(2): pyautogui.hotkey('ctrl','left')
+            for _ in range(4):
+                pyautogui.press('right')
                 time.sleep(LOCAL_DELAY_TIME)
             change_tab('left')
             # end extract sku data
