@@ -1,7 +1,22 @@
 import pyautogui
 import time, sys, pyperclip, re
 
-DELAY_TIME = 0.6
+from automation.gui_actions import change_tab
+from config.constants import (
+    DELAY_TIME,
+    PAYMENT_SEARCH_ICON,
+    PAYMENT_SEARCH_OPEN,
+    PAYMENT_REF_FIELD,
+    PAYMENT_SEARCH_BTN,
+    PAYMENT_STATUS_START,
+    PAYMENT_STATUS_END,
+    PAYMENT_ROW,
+    PAYMENT_RECORD_BTN,
+    PAYMENT_DATE_FIELD,
+    PAYMENT_DEPOSIT_FIELD,
+    PAYMENT_REF_NO_FIELD,
+    PAYMENT_SAVE_BTN,
+)
 task_numbers = int(sys.argv[1])
 payayment_received_date = sys.argv[2]
 payment_date = str(payayment_received_date).replace('-', ' ')
@@ -19,15 +34,6 @@ def row_found(text):
     rows = re.findall(r"\b(KPG Branch|Confirmed)\b", text)
     return rows
 
-def change_tab(direction='right'):
-    if direction == 'right':
-        with pyautogui.hold('ctrl'):
-            pyautogui.press('tab')
-            time.sleep(DELAY_TIME)
-    elif direction == 'left':
-        with pyautogui.hold(['ctrl','shift']):
-            pyautogui.press('tab')
-            time.sleep(DELAY_TIME)
 
 def main():
     for i in reversed(range(5)):
@@ -36,14 +42,14 @@ def main():
 
     for j in range(task_numbers):
         # 1. click search icon
-        pyautogui.moveTo(1831,669)
+        pyautogui.moveTo(*PAYMENT_SEARCH_ICON)
         pyautogui.click(button='left')
-        pyautogui.moveTo(1859,669)
+        pyautogui.moveTo(*PAYMENT_SEARCH_OPEN)
         pyautogui.click(button='left')
         time.sleep(DELAY_TIME)
 
         # 2. click reference text box and triple click
-        pyautogui.moveTo(1273,371)
+        pyautogui.moveTo(*PAYMENT_REF_FIELD)
         pyautogui.click(button='left')
         pyautogui.tripleClick()
         time.sleep(DELAY_TIME)
@@ -59,13 +65,13 @@ def main():
         # 3. paste the copied text and click search
         pyautogui.hotkey('ctrl','v')
         time.sleep(DELAY_TIME/1.5)
-        pyautogui.moveTo(377,741)
+        pyautogui.moveTo(*PAYMENT_SEARCH_BTN)
         pyautogui.click(button='left')
         time.sleep(DELAY_TIME/1.5)
 
         # check the row is draft or paid or confirmed
-        pyautogui.moveTo(13, 649)
-        pyautogui.dragTo(165, 822, duration=0.5, button='left')
+        pyautogui.moveTo(*PAYMENT_STATUS_START)
+        pyautogui.dragTo(*PAYMENT_STATUS_END, duration=0.5, button='left')
         pyautogui.hotkey('ctrl','c')
         text = pyperclip.paste()
         found_statuses = find_status(text)
@@ -93,17 +99,17 @@ def main():
             continue
         else:
             # 4. click the appeared row
-            pyautogui.moveTo(657,737)
+            pyautogui.moveTo(*PAYMENT_ROW)
             pyautogui.click(button='left')
             time.sleep(DELAY_TIME/1.5)
 
             # 5. click the 'Record Payment'
-            pyautogui.moveTo(763,349)
+            pyautogui.moveTo(*PAYMENT_RECORD_BTN)
             pyautogui.click(button='left')
             time.sleep(DELAY_TIME/1.5)
 
             # 6. click the date box and write the desire date (sys.agrv[2])
-            pyautogui.moveTo(1029,405)
+            pyautogui.moveTo(*PAYMENT_DATE_FIELD)
             pyautogui.tripleClick()
             time.sleep(DELAY_TIME/1.5)
             pyautogui.write(payment_date)
@@ -111,7 +117,7 @@ def main():
             time.sleep(DELAY_TIME/1.5)
 
             # deposit to 'Cashier'
-            pyautogui.moveTo(604,522)
+            pyautogui.moveTo(*PAYMENT_DEPOSIT_FIELD)
             pyautogui.click(button='left')
             time.sleep(DELAY_TIME/1.5)
             pyautogui.write(deposit_to)
@@ -119,7 +125,7 @@ def main():
             time.sleep(DELAY_TIME/1.5)
 
             # paster reference number
-            pyautogui.moveTo(1091,522)
+            pyautogui.moveTo(*PAYMENT_REF_NO_FIELD)
             pyautogui.tripleClick()
             time.sleep(DELAY_TIME/1.5)
 
@@ -135,7 +141,7 @@ def main():
             time.sleep(DELAY_TIME/1.5)
 
             # 7. click save button
-            pyautogui.moveTo(534,974)
+            pyautogui.moveTo(*PAYMENT_SAVE_BTN)
             pyautogui.click(button='left')
             time.sleep(DELAY_TIME*3)
 
