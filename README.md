@@ -31,6 +31,8 @@ This repository contains two Python automation scripts using **PyAutoGUI** to st
 * `pyperclip`
 * `pygame` (for audio feedback)
 
+These libraries are required for all automation scripts and must be installed before running the tools.
+
 Install dependencies:
 
 ```bash
@@ -41,22 +43,26 @@ pip install pyautogui pyperclip pygame
 
 ## 🧾 Usage
 
-### 1. **Invoice Entry**
+### 1. **Unified CLI**
+
+Run either workflow through `main.py`:
+
+```bash
+python main.py invoice <number_of_tasks>
+python main.py payment <number_of_tasks> <payment_date>
+```
+
+* **`<number_of_tasks>`** – Number of rows to process.
+* **`<payment_date>`** – Date in format `YYYY-MM-DD` (only for the payment command).
+
+### 2. **Direct Execution**
+
+The legacy scripts still work individually if preferred:
 
 ```bash
 python invoices_data_entry.py <number_of_tasks>
-```
-
-* **`<number_of_tasks>`**: Number of invoice rows to process from the Google Sheet.
-
-### 2. **Record Payments**
-
-```bash
 python record_payment.py <number_of_tasks> <payment_date>
 ```
-
-* **`<number_of_tasks>`**: Number of payment entries to process.
-* **`<payment_date>`**: Date in format `YYYY-MM-DD`.
 
 ---
 
@@ -72,10 +78,18 @@ python record_payment.py <number_of_tasks> <payment_date>
 
 ```
 .
+├── main.py                 # Unified command line entry
 ├── invoices_data_entry.py  # Handles invoice creation
 ├── record_payment.py       # Handles payment recording
-├── README.md               # You're here!
+├── automation/             # GUI actions
+├── utils/                  # Helper functions
+├── config/                 # Coordinates and constants
+├── assets/
+│   └── confirmation.wav    # Notification sound
+└── README.md               # You're here!
 ```
+
+The `assets` folder holds `confirmation.wav`, which is played on invoice errors. Adjust `config/constants.py` to point elsewhere if you change its location.
 
 ---
 
